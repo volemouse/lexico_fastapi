@@ -4,7 +4,7 @@
 
 2. Для заполнения бд использовал скрипт из task_two/filling_db.py (по 700 000 и 500 000 соответсвенно)
 
-Самый быстрый вариант решения в принципе не требует даже в task_two/query_execution.py через запрос 
+Самый быстрый вариант решения в task_two/query_execution.py через запрос 
             '''UPDATE full_names fn
                 SET status = sh.status
                 FROM short_names sh
