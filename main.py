@@ -60,7 +60,7 @@ async def get_redis():
 
 @app.post('/write_data')
 async def write_data(phone_data: PhoneData, redis=Depends(get_redis)):
-    """принимаем данные о телефоне и соединение Redis через зависимость Depends
+    """принимаем данные о телефоне и адресе и соединение Redis через зависимость Depends
     на вход json вида:
                 {
                 "phone": "89991234567",
