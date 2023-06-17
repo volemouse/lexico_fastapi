@@ -30,6 +30,7 @@ async def update_full_names_from_short_names(conn_string):
     finally:
         await conn.close()
         return res, err
+    
 
 conn_string = 'postgresql://postgres:111@localhost/bobdb'
 res, err =asyncio.run(update_full_names_from_short_names(conn_string))
