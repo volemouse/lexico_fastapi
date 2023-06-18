@@ -23,11 +23,33 @@
 
 Получили, в среднем, 2 секунды на весь скрипт.
 
-если таблицы в разных схемах добавляем название схем 
+Можно использовать split_part()
 
-"""
-UPDATE *имя_схемы_с_фул.full_names fn
-SET status = sh.status
-FROM *имя_схемы_с_шорт.short_names sh
-WHERE SUBSTRING(fn.name, 1, POSITION('.' IN fn.name) - 1) = sh.name;
-"""
+'''UPDATE full_names
+SET status = short_names.status
+FROM short_names
+WHERE full_names.status IS NULL
+AND split_part(full_names.name, '.', 1) = short_names.name '''
+
+Но такой запрос проигрывает около секунды (3 секунды на выполнение)
+
+Если мы допускаем, что в именах файлов могут быть точки, аля 'naz.1' и 'naz.1.mp3' соответсвенно то можно использовать такой запрос
+'''UPDATE full_names
+SET status = short_names.status
+FROM short_names
+WHERE full_names.status IS NULL
+AND substring(full_names.name from '(.*)\.[^.]*$') = short_names.name
+AND full_names.name LIKE '%' || short_names.name || '%' 
+'''
+Здесь функция substring() используется для извлечения подстроки
+, начинающейся с начала строки и заканчивающейся перед последней точкой в имени файла в таблице full_names. 
+
+можно использовать regexp_replace() для удаление всего после последней точки
+ '''
+UPDATE full_names
+SET status = short_names.status
+FROM short_names
+WHERE full_names.status IS NULL
+AND regexp_replace(full_names.name, '\.[^.]*$', '') = short_names.name
+AND full_names.name LIKE '%' || short_names.name || '%'
+'''

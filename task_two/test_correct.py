@@ -24,8 +24,15 @@ async def correct_test(conn_string):
         return error_dict
 
 
+async def clear_status(conn_string):
+    conn = await asyncpg.connect(conn_string)
+    query='UPDATE full_names SET status = NULL;'
+    await conn.fetch(query)
+    await conn.close()
+
 
 
 conn_string = 'postgresql://postgres:111@localhost/bobdb'
-error_dict =asyncio.run(correct_test(conn_string))
-print(error_dict)
+# error_dict =asyncio.run(correct_test(conn_string))
+asyncio.run(clear_status(conn_string))
+# print(error_dict)
