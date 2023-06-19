@@ -6,8 +6,10 @@ import uvicorn
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel, validator
 
+
 app = FastAPI()
 PHONE_REGEX = re.compile(r'^(\+7|8)?[\s\(]*\d{3}[\s\)]*\d{3}[-\s]*\d{2}[-\s]*\d{2}$')
+
 
 class Address(BaseModel):
     """Класс для валидации адреса """
@@ -15,6 +17,7 @@ class Address(BaseModel):
     city: str
     state: str
     zip_code: str
+
 
 class PhoneData(BaseModel):
     """Класс для входных параметров на запись """
@@ -28,6 +31,7 @@ class PhoneData(BaseModel):
         if not PHONE_REGEX.match(phone):
             raise ValueError('Invalid phone number format')
         return phone
+
 
 async def startup_event():
     """ функция для создания Redis-пула при запуске приложения хост и порт получаем из окружения, иначе дефолт"""
@@ -58,6 +62,7 @@ async def get_redis():
     """функция для получения соединения Redis с помощью зависимости Depends """
     return app.state.redis
 
+
 @app.post('/write_data')
 async def write_data(phone_data: PhoneData, redis=Depends(get_redis)):
     """принимаем данные о телефоне и адресе и соединение Redis через зависимость Depends
@@ -80,6 +85,7 @@ async def write_data(phone_data: PhoneData, redis=Depends(get_redis)):
     else:
         return {'message': 'Data written successfully'}
 
+
 @app.get('/check_data')
 async def check_data(phone: str, redis=Depends(get_redis)):
     """обработчик GET-запроса на /check_data принимаем номер телефона и соединение Redis через зависимость Depends"""
@@ -95,6 +101,7 @@ async def check_data(phone: str, redis=Depends(get_redis)):
             return {'message': 'Data not found'}
     except Exception as e:
         return {'message': f'Error checking data: {e}'}
+
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host='0.0.0.0', reload=True, port=8000)
